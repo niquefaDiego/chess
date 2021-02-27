@@ -41,18 +41,27 @@ impl GameState {
 impl std::fmt::Display for GameState {
   fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
     let pieces = ['.', 'K', 'k', 'Q', 'q', 'R', 'r', 'B', 'b', 'N', 'n', 'P', 'p'];
+    let white_view = true;
     let left_margin = "                                ";
-    writeln!(f, "flags = {}, last_move = {}", self.flags, self.last_move);
-    writeln!(f, "");
-    writeln!(f, "{}  H G F E D C B A", left_margin);
-    writeln!(f, "{} +-+-+-+-+-+-+-+-+", left_margin);
+    writeln!(f, "flags = {}, last_move = {}", self.flags, self.last_move).unwrap();
+    writeln!(f, "").unwrap();
+    if white_view {
+      writeln!(f, "{}  A B C D E F G H", left_margin).unwrap();
+    } else {
+      writeln!(f, "{}  H G F E D C B A", left_margin).unwrap();
+    }
+    writeln!(f, "{} +-+-+-+-+-+-+-+-+", left_margin).unwrap();
     for i in 0..8 {
-      write!(f, "{}{}|", left_margin, i+1);
+      write!(f, "{}{}|", left_margin, if white_view { 8 - i } else { i+1 } ).unwrap();
       for j in 0..8 {
-        write!(f, "{}|", pieces[self.board[i][j] as usize]);
+        if white_view {
+          write!(f, "{}|", pieces[self.board[7-i][j] as usize]).unwrap();
+        } else {
+          write!(f, "{}|", pieces[self.board[i][7-j] as usize]).unwrap();
+        }
       }
-      write!(f, "\n");
-      writeln!(f, "{} +-+-+-+-+-+-+-+-+", left_margin);
+      write!(f, "\n").unwrap();
+      writeln!(f, "{} +-+-+-+-+-+-+-+-+", left_margin).unwrap();
     }
     Ok(())
   }
